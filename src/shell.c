@@ -2,9 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include "InputBuffer.h"
-#include "Util.h"
 #include "Table.h"
-
+#include "Util.h"
 
 int main(int argc, char **argv) {
     InputBuffer_t *input_buffer = new_InputBuffer();

@@ -1,7 +1,7 @@
 #ifndef TABLE_H
 #define TABLE_H
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include "User.h"
 
 #define INIT_TABLE_SIZE 10000
@@ -20,6 +20,6 @@ Table_t *new_Table(char *file_name);
 int add_User(Table_t *table, User_t *user);
 int archive_table(Table_t *table);
 int load_table(Table_t *table, char *file_name);
-User_t* get_User(Table_t *table, size_t idx);
+User_t *get_User(Table_t *table, size_t idx);
 
 #endif

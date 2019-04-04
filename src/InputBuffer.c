@@ -1,13 +1,14 @@
+#include "InputBuffer.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include "InputBuffer.h"
 
 ///
 /// Allocate InputBuffer_t and initialize some attributes
 /// Return: ptr of InputBuffer_t
 ///
-InputBuffer_t* new_InputBuffer() {
-    InputBuffer_t *input_buffer = (InputBuffer_t*) malloc(sizeof(InputBuffer_t));
+InputBuffer_t *new_InputBuffer() {
+    InputBuffer_t *input_buffer =
+        (InputBuffer_t *)malloc(sizeof(InputBuffer_t));
     input_buffer->buffer = NULL;
     input_buffer->buffer_len = 0;
     input_buffer->input_len = 0;
@@ -19,7 +20,8 @@ InputBuffer_t* new_InputBuffer() {
 /// TODO: accept different input source
 ///
 void read_input(InputBuffer_t *input_buffer) {
-    ssize_t bytes_read = getline(&(input_buffer->buffer), &(input_buffer->buffer_len), stdin);
+    ssize_t bytes_read =
+        getline(&(input_buffer->buffer), &(input_buffer->buffer_len), stdin);
     ssize_t input_len;
 
     if (bytes_read <= 0) {
@@ -28,8 +30,8 @@ void read_input(InputBuffer_t *input_buffer) {
     }
 
     input_len = bytes_read;
-    while (input_buffer->buffer[input_len - 1] == '\n'
-            || input_buffer->buffer[input_len - 1] == '\r') {
+    while (input_buffer->buffer[input_len - 1] == '\n' ||
+           input_buffer->buffer[input_len - 1] == '\r') {
         input_buffer->buffer[input_len - 1] = '\0';
         input_len--;
     }

@@ -1,11 +1,11 @@
+#include "Util.h"
+#include <fcntl.h>
 #include <stdio.h>
 #include <stdio_ext.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
 #include <sys/types.h>
-#include <fcntl.h>
-#include "Util.h"
+#include <unistd.h>
 #include "Command.h"
 #include "Table.h"
 
@@ -13,8 +13,8 @@
 /// Allocate State_t and initialize some attributes
 /// Return: ptr of new State_t
 ///
-State_t* new_State() {
-    State_t *state = (State_t*)malloc(sizeof(State_t));
+State_t *new_State() {
+    State_t *state = (State_t *)malloc(sizeof(State_t));
     state->saved_stdout = -1;
     return state;
 }
@@ -75,7 +75,7 @@ void handle_builtin_cmd(Table_t *table, Command_t *cmd, State_t *state) {
                 if (dup2(fd, 1) == -1) {
                     state->saved_stdout = -1;
                 }
-                __fpurge(stdout); //This is used to clear the stdout buffer
+                __fpurge(stdout);  // This is used to clear the stdout buffer
             }
         }
     } else if (!strncmp(cmd->args[0], ".load", 5)) {
@@ -138,44 +138,48 @@ int handle_select_cmd(Table_t *table, Command_t *cmd) {
 /// Show the help messages
 ///
 void print_help_msg() {
-    const char msg[] = "# Supported Commands\n"
-    "\n"
-    "## Built-in Commands\n"
-    "\n"
-    "  * .exit\n"
-    "\tThis cmd archives the table, if the db file is specified, then exit.\n"
-    "\n"
-    "  * .output\n"
-    "\tThis cmd change the output strategy, default is stdout.\n"
-    "\n"
-    "\tUsage:\n"
-    "\t    .output (<file>|stdout)\n\n"
-    "\tThe results will be redirected to <file> if specified, otherwise they will display to stdout.\n"
-    "\n"
-    "  * .load\n"
-    "\tThis command loads records stored in <DB file>.\n"
-    "\n"
-    "\t*** Warning: This command will overwrite the records already stored in current table. ***\n"
-    "\n"
-    "\tUsage:\n"
-    "\t    .load <DB file>\n\n"
-    "\n"
-    "  * .help\n"
-    "\tThis cmd displays the help messages.\n"
-    "\n"
-    "## Query Commands\n"
-    "\n"
-    "  * insert\n"
-    "\tThis cmd inserts one user record into table.\n"
-    "\n"
-    "\tUsage:\n"
-    "\t    insert <id> <name> <email> <age>\n"
-    "\n"
-    "\t** Notice: The <name> & <email> are string without any whitespace character, and maximum length of them is 255. **\n"
-    "\n"
-    "  * select\n"
-    "\tThis cmd will display all user records in the table.\n"
-    "\n";
+    const char msg[] =
+        "# Supported Commands\n"
+        "\n"
+        "## Built-in Commands\n"
+        "\n"
+        "  * .exit\n"
+        "\tThis cmd archives the table, if the db file is specified, then "
+        "exit.\n"
+        "\n"
+        "  * .output\n"
+        "\tThis cmd change the output strategy, default is stdout.\n"
+        "\n"
+        "\tUsage:\n"
+        "\t    .output (<file>|stdout)\n\n"
+        "\tThe results will be redirected to <file> if specified, otherwise "
+        "they will display to stdout.\n"
+        "\n"
+        "  * .load\n"
+        "\tThis command loads records stored in <DB file>.\n"
+        "\n"
+        "\t*** Warning: This command will overwrite the records already stored "
+        "in current table. ***\n"
+        "\n"
+        "\tUsage:\n"
+        "\t    .load <DB file>\n\n"
+        "\n"
+        "  * .help\n"
+        "\tThis cmd displays the help messages.\n"
+        "\n"
+        "## Query Commands\n"
+        "\n"
+        "  * insert\n"
+        "\tThis cmd inserts one user record into table.\n"
+        "\n"
+        "\tUsage:\n"
+        "\t    insert <id> <name> <email> <age>\n"
+        "\n"
+        "\t** Notice: The <name> & <email> are string without any whitespace "
+        "character, and maximum length of them is 255. **\n"
+        "\n"
+        "  * select\n"
+        "\tThis cmd will display all user records in the table.\n"
+        "\n";
     printf("%s", msg);
 }
-

@@ -1,5 +1,6 @@
 #ifndef DB_UTIL_H
 #define DB_UTIL_H
+#include <stdlib.h>
 #include "Command.h"
 #include "Table.h"
 
@@ -7,7 +8,7 @@ typedef struct State {
     int saved_stdout;
 } State_t;
 
-State_t* new_State();
+State_t *new_State();
 void print_prompt(State_t *state);
 void print_user(User_t *user);
 int parse_input(char *input, Command_t *cmd);

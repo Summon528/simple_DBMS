@@ -1,7 +1,8 @@
 #ifndef COMMAND_H
 #define COMMAND_H
+#include <stdlib.h>
 
-enum { 
+enum {
     UNRECOG_CMD,
     BUILT_IN_CMD,
     QUERY_CMD,
@@ -27,7 +28,7 @@ typedef struct Command {
     size_t args_cap;
 } Command_t;
 
-Command_t* new_Command();
+Command_t *new_Command();
 int add_Arg(Command_t *cmd, const char *arg);
 void cleanup_Command(Command_t *cmd);
 
