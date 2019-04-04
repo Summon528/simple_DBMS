@@ -32,6 +32,9 @@ int add_User(Table_t *table, User_t *user) {
     if (!table || !user) {
         return 0;
     }
+    for (idx = 0; idx < table->len; idx++) {
+        if (get_User(table, idx)->id == user->id) return 0;
+    }
     if (table->len == table->capacity) {
         User_t *new_user_buf =
             (User_t *)malloc(sizeof(User_t) * (table->len + EXT_LEN));
