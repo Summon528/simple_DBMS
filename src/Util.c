@@ -31,32 +31,55 @@ void print_prompt(State_t *state) {
 ///
 /// Print the user in the specific format
 ///
-void print_user(User_t *user, size_t mask) {
-    size_t first = 1;
+void print_user(User_t *user, char **fields, size_t fields_cnt) {
+    size_t first = 1, idx, jdx;
     printf("(");
-    if (mask & 1) {
-        if (!first) printf(", ");
-        printf("%d", user->id);
-        first = 0;
+    if (!strcmp(fields[0], "*")) {
+        for (int i = 0; i < 4; i++) {
+            if (!first) printf(", ");
+            print_user_field(user, i);
+            first = 0;
+        }
+        printf(")\n");
+        return;
     }
-    if (mask & 1 << 1) {
-        if (!first) printf(", ");
-        printf("%s", user->name);
-        first = 0;
-    }
-    if (mask & 1 << 2) {
-        if (!first) printf(", ");
-        printf("%s", user->email);
-        first = 0;
-    }
-    if (mask & 1 << 3) {
-        if (!first) printf(", ");
-        printf("%d", user->age);
-        first = 0;
+    char user_fields_name[][10] = {"id", "name", "email", "age"};
+    for (idx = 0; idx < fields_cnt; idx++) {
+        for (jdx = 0; fields[idx][jdx] != '\0'; jdx++) {
+            if (fields[idx][jdx] == ',') {
+                fields[idx][jdx] = '\0';
+                break;
+            }
+        }
+        for (jdx = 0; jdx < 4; jdx++) {
+            if (!strcmp(user_fields_name[jdx], fields[idx])) {
+                if (!first) printf(", ");
+                print_user_field(user, jdx);
+                first = 0;
+            }
+        }
     }
     printf(")\n");
 }
 
+void print_user_field(User_t *user, size_t idx) {
+    switch (idx) {
+        case 0:
+            printf("%d", user->id);
+            return;
+        case 1:
+            printf("%s", user->name);
+            return;
+        case 2:
+            printf("%s", user->email);
+            return;
+        case 3:
+            printf("%d", user->age);
+            return;
+        default:
+            return;
+    }
+}
 ///
 /// This function received an output argument
 /// Return: category of the command
@@ -160,25 +183,8 @@ int handle_select_cmd(Table_t *table, Command_t *cmd) {
             field_end = idx;
         }
     }
-    size_t mask = field_end == 1 ? -1 : 0;
-    for (idx = 1; idx < field_end; idx++) {
-        if (!strcmp("*", cmd->args[idx])) {
-            mask = -1;
-            break;
-        }
-        for (int i = cmd->args_cap - 1; i >= 0; i--) {
-            if (cmd->args[idx][i] == ',') {
-                cmd->args[idx][i] = '\0';
-                break;
-            }
-        }
-        if (!strcmp("id", cmd->args[idx])) mask |= 1;
-        if (!strcmp("name", cmd->args[idx])) mask |= 1 << 1;
-        if (!strcmp("email", cmd->args[idx])) mask |= 1 << 2;
-        if (!strcmp("age", cmd->args[idx])) mask |= 1 << 3;
-    }
     for (idx = offset; idx < MIN(offset + limit, table->len); idx++) {
-        print_user(get_User(table, idx), mask);
+        print_user(get_User(table, idx), cmd->args + 1, field_end - 1);
     }
     cmd->type = SELECT_CMD;
     return table->len;
