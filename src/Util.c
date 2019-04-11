@@ -32,17 +32,17 @@ void print_prompt(State_t *state) {
 /// Print the user in the specific format
 ///
 void print_user(User_t *user, char **fields, size_t fields_cnt) {
-    size_t first = 1, idx, jdx;
-    printf("(");
-    if (!strcmp(fields[0], "*")) {
-        for (int i = 0; i < 4; i++) {
-            if (!first) printf(", ");
-            print_user_field(user, i);
-            first = 0;
+    size_t idx, jdx;
+    if (fields_cnt == 0 || !strcmp(fields[0], "*")) {
+        printf("(");
+        for (idx = 0; idx < 4; idx++) {
+            if (idx != 0) printf(", ");
+            print_user_field(user, idx);
         }
         printf(")\n");
         return;
     }
+    printf("(");
     char user_fields_name[][10] = {"id", "name", "email", "age"};
     for (idx = 0; idx < fields_cnt; idx++) {
         for (jdx = 0; fields[idx][jdx] != '\0'; jdx++) {
@@ -53,9 +53,8 @@ void print_user(User_t *user, char **fields, size_t fields_cnt) {
         }
         for (jdx = 0; jdx < 4; jdx++) {
             if (!strcmp(user_fields_name[jdx], fields[idx])) {
-                if (!first) printf(", ");
+                if (idx != 0) printf(", ");
                 print_user_field(user, jdx);
-                first = 0;
             }
         }
     }
