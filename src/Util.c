@@ -260,9 +260,47 @@ int handle_insert_cmd(Table_t *table, Command_t *cmd) {
 int handle_select_cmd(Table_t *table, Command_t *cmd) {
     cmd->type = SELECT_CMD;
     field_state_handler(cmd, 1);
-
-    print_users(table, NULL, 0, cmd);
+    if (cmd->cmd_args.sel_args.aggrs[0] == NO_AGGR) {
+        print_users(table, NULL, 0, cmd);
+    } else {
+        print_aggr(table, cmd);
+    }
     return table->len;
+}
+
+void print_aggr(Table_t* table, Command_t *t) {
+    if (t->cmd_args.sel_args.offset > 0) return;
+    if (t->cmd_args.sel_args.limit == 0) return;
+    printf("(");
+    for (int i = 0; i < t->cmd_args.sel_args.fields_len; i++) {
+        if(t->cmd_args.sel_args.aggrs[i] == NO_AGGR) continue;
+        int sun = 0, cnt = 0;
+        for (int j = 0; j < table->len; j++) {
+            User_t* usr_ptr = get_User(table, j);
+            if(!check_condition(usr_ptr, &(t->where_args))) continue;
+            cnt++;
+            if (!strncmp(t->cmd_args.sel_args.fields[i], "id", 2)) {
+                sun += usr_ptr->id;
+            } else if (!strncmp(t->cmd_args.sel_args.fields[i], "age", 3)) {
+                sun += usr_ptr->age;
+            }
+        }
+        if (i != 0) printf(", ");
+        switch (t->cmd_args.sel_args.aggrs[i]) {
+            case AVG:
+                printf("%.3lf", (double)sun / cnt);
+                break;
+            case COUNT:
+                printf("%d", cnt);
+                break;
+            case SUM:
+                printf("%d", sun);
+                break;
+            default:
+                break;
+        }
+    }
+    printf(")\n");
 }
 
 ///
