@@ -62,6 +62,7 @@ void print_users(Table_t *table, int *idxList, size_t idxListLen, Command_t *cmd
     size_t idx;
     int limit = cmd->cmd_args.sel_args.limit;
     int offset = cmd->cmd_args.sel_args.offset;
+    User_t *usr_ptr;
 
     if (offset == -1) {
         offset = 0;
@@ -72,15 +73,97 @@ void print_users(Table_t *table, int *idxList, size_t idxListLen, Command_t *cmd
             if (limit != -1 && (idx - offset) >= limit) {
                 break;
             }
-            print_user(get_User(table, idxList[idx]), &(cmd->cmd_args.sel_args));
+            usr_ptr = get_User(table, idxList[idx]);
+            if(check_condition(usr_ptr, &(cmd->where_args))) {
+                print_user(usr_ptr, &(cmd->cmd_args.sel_args));
+            }
         }
     } else {
         for (idx = offset; idx < table->len; idx++) {
             if (limit != -1 && (idx - offset) >= limit) {
                 break;
             }
-            print_user(get_User(table, idx), &(cmd->cmd_args.sel_args));
+            usr_ptr = get_User(table, idx);
+            if(check_condition(usr_ptr, &(cmd->where_args))) {
+                print_user(usr_ptr, &(cmd->cmd_args.sel_args));
+            }
         }
+    }
+}
+
+int check_condition(User_t* usr_ptr, WhereArgs_t* w) {
+    if (w->len == 0) return 1;
+    int result[2];
+    for (int i = 0; i < w->len; i++) {
+        if (!strncmp(w->l_operand[i], "id", 2)) {
+            result[i] = _check_condition_num(usr_ptr->id, w, i);
+        } else if (!strncmp(w->l_operand[i], "name", 4)) {
+            result[i] = _check_condition_str(usr_ptr->name, w, i);
+        } else if (!strncmp(w->l_operand[i], "email", 5)) {
+            result[i] = _check_condition_str(usr_ptr->email, w, i);
+        } else if (!strncmp(w->l_operand[i], "age", 3)) {
+            result[i] = _check_condition_num(usr_ptr->age, w, i);
+        }
+    }
+    if (w->len == 1) return result[0];
+    if (w->len == 2 && w->logic == AND) return result[0] && result[1];
+    if (w->len == 2 && w->logic == OR) return result[0] || result[1];
+    return 0;
+}
+
+int _check_condition_num(int val, WhereArgs_t* w, int idx) {
+    switch (w->type[idx]) {
+        case _string:
+            return 0;
+        case _int:
+            switch (w->comp[idx]) {
+                case LEQ:
+                    return val <= w->r_operand[idx].ival;
+                case LE:
+                    return val < w->r_operand[idx].ival;
+                case GT:
+                    return val > w->r_operand[idx].ival;
+                case GTQ:
+                    return val >= w->r_operand[idx].ival;
+                case EQ:
+                    return val == w->r_operand[idx].ival;
+                case NEQ:
+                    return val != w->r_operand[idx].ival;
+            }
+        case _double:
+            switch (w->comp[idx]) {
+                case LEQ:
+                    return val <= w->r_operand[idx].dval;
+                case LE:
+                    return val < w->r_operand[idx].dval;
+                case GT:
+                    return val > w->r_operand[idx].dval;
+                case GTQ:
+                    return val >= w->r_operand[idx].dval;
+                case EQ:
+                    return val == w->r_operand[idx].dval;
+                case NEQ:
+                    return val != w->r_operand[idx].dval;
+            }
+    }
+    return 0;
+}
+
+int _check_condition_str(char* val, WhereArgs_t* w, int idx) {
+    int cmp_r;
+    switch (w->type[idx]) {
+        case _string:
+            cmp_r = strcmp(val, w->r_operand[idx].sval);
+            switch (w->comp[idx]) {
+                case EQ:
+                    return !cmp_r;
+                case NEQ:
+                    return cmp_r;
+                default:
+                    return 0;
+            }
+        default:
+            return 0;
     }
 }
 
@@ -226,4 +309,3 @@ void print_help_msg() {
     "\n";
     printf("%s", msg);
 }
-

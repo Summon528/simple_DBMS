@@ -89,6 +89,9 @@ void cleanup_Command(Command_t *cmd) {
         free(cmd->args[idx]);
         cmd->args[idx] = NULL;
     }
+    if(cmd->where_args.type[0]==_string) free(cmd->where_args.r_operand[0].sval);
+    if(cmd->where_args.type[1]==_string) free(cmd->where_args.r_operand[1].sval);
+    memset(&(cmd->where_args), 0, sizeof(WhereArgs_t));
     if (cmd->type == SELECT_CMD) {
         for (idx = 0; idx < cmd->cmd_args.sel_args.fields_len; idx++) {
             free(cmd->cmd_args.sel_args.fields[idx]);
@@ -101,4 +104,3 @@ void cleanup_Command(Command_t *cmd) {
     cmd->type = UNRECOG_CMD;
     cmd->args_len = 0;
 }
-

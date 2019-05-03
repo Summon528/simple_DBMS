@@ -16,6 +16,9 @@ void handle_builtin_cmd(Table_t *table, Command_t *cmd, State_t *state);
 int handle_query_cmd(Table_t *table, Command_t *cmd);
 int handle_insert_cmd(Table_t *table, Command_t *cmd);
 int handle_select_cmd(Table_t *table, Command_t *cmd);
+int check_condition(User_t *user, WhereArgs_t* where_args);
 void print_help_msg();
+int _check_condition_str(char* val, WhereArgs_t* w, int idx);
+int _check_condition_num(int val, WhereArgs_t* w, int idx);
 
 #endif
