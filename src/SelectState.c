@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "Command.h"
 #include "SelectState.h"
+#include "WhereState.h"
 
 void field_state_handler(Command_t *cmd, size_t arg_idx) {
     cmd->cmd_args.sel_args.fields = NULL;
@@ -45,6 +46,9 @@ void table_state_handler(Command_t *cmd, size_t arg_idx) {
         } else if (!strncmp(cmd->args[arg_idx], "limit", 5)) {
             limit_state_handler(cmd, arg_idx+1);
             return;
+        } else if (!strncmp(cmd->args[arg_idx], "where", 5)) {
+            where_state_handler(cmd, arg_idx+1);
+            return;
         }
     }
     cmd->type = UNRECOG_CMD;
@@ -64,6 +68,11 @@ void offset_state_handler(Command_t *cmd, size_t arg_idx) {
 
             limit_state_handler(cmd, arg_idx+1);
             return;
+        }  else if (arg_idx < cmd->args_len
+                && !strncmp(cmd->args[arg_idx], "where", 5)) {
+
+            where_state_handler(cmd, arg_idx+1);
+            return;
         }
     }
     cmd->type = UNRECOG_CMD;
@@ -77,6 +86,11 @@ void limit_state_handler(Command_t *cmd, size_t arg_idx) {
         arg_idx++;
 
         if (arg_idx == cmd->args_len) {
+            return;
+        } else if (arg_idx < cmd->args_len
+                && !strncmp(cmd->args[arg_idx], "where", 5)) {
+
+            where_state_handler(cmd, arg_idx+1);
             return;
         }
     }
