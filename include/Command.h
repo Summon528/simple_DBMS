@@ -15,6 +15,7 @@ enum {
 typedef enum Comp { EQ, NEQ, GT, LE, GTQ, LEQ } Comp_t;
 typedef enum Type { _double, _int, _string } Type_t;
 typedef enum Logic { AND, OR } Logic_t;
+typedef enum Aggr { SUM, AVG, COUNT, NO_AGGR } Aggr_t;
 
 typedef struct {
     char name[256];
@@ -29,6 +30,7 @@ typedef struct SelectArgs {
     size_t fields_len;
     int offset;
     int limit;
+    Aggr_t *aggrs;
 } SelectArgs_t;
 
 typedef union IDC {
@@ -61,7 +63,7 @@ typedef struct Command {
 
 Command_t* new_Command();
 int add_Arg(Command_t *cmd, const char *arg);
-int add_select_field(Command_t *cmd, const char *argument);
+int add_select_field(Command_t *cmd, const char *argument, Aggr_t aggr);
 void cleanup_Command(Command_t *cmd);
 
 #endif

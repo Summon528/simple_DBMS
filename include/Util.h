@@ -11,6 +11,7 @@ State_t* new_State();
 void print_prompt(State_t *state);
 void print_user(User_t *user, SelectArgs_t *sel_args);
 void print_users(Table_t *table, int *idxList, size_t idxListLen, Command_t *cmd);
+void print_aggr(Table_t* table, Command_t *t);
 int parse_input(char *input, Command_t *cmd);
 void handle_builtin_cmd(Table_t *table, Command_t *cmd, State_t *state);
 int handle_query_cmd(Table_t *table, Command_t *cmd);

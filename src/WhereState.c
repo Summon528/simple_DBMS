@@ -4,61 +4,56 @@
 
 void where_state_handler(Command_t *cmd, size_t arg_idx) {
     for(int comp_idx = 0; comp_idx < 2; comp_idx++) {
-        int f_len = 0;
         char *s  = cmd->args[arg_idx];
         if (arg_idx < cmd->args_len) {
             if (!strncmp(s, "id", 2)) {
-                f_len = 2;
+                s += 2;
                 strcpy(cmd->where_args.l_operand[comp_idx], "id");
             } else if (!strncmp(s, "name", 4)) {
-                f_len = 4;
+                s += 4;
                 strcpy(cmd->where_args.l_operand[comp_idx], "name");
             } else if (!strncmp(s, "email", 5)) {
-                f_len = 5;
+                s += 5;
                 strcpy(cmd->where_args.l_operand[comp_idx], "email");
             } else if (!strncmp(s, "age", 3)) {
-                f_len = 3;
+                s += 3;
                 strcpy(cmd->where_args.l_operand[comp_idx], "age");
             } else {
                 goto error;
             }
 
-            if(s[f_len] == '\0') {
+            if(*s == '\0') {
                 arg_idx++;
                 if (arg_idx >= cmd->args_len) goto error;
                 s = cmd->args[arg_idx];
-            } else {
-                s += f_len;
             }
 
             if (!strncmp(s, "!=", 2)) {
-                f_len = 2;
+                s += 2;
                 cmd->where_args.comp[comp_idx] = NEQ;
             } else if (!strncmp(s, ">=", 2)) {
-                f_len = 2;
+                s += 2;
                 cmd->where_args.comp[comp_idx] = GTQ;
             } else if (!strncmp(s, "<=", 2)) {
-                f_len = 2;
+                s += 2;
                 cmd->where_args.comp[comp_idx] = LEQ;
             } else if (!strncmp(s, "=", 1)) {
-                f_len = 1;
+                s += 1;
                 cmd->where_args.comp[comp_idx] = EQ;
             } else if (!strncmp(s, ">", 1)) {
-                f_len = 1;
+                s += 1;
                 cmd->where_args.comp[comp_idx] = GT;
             } else if (!strncmp(s, "<", 1)) {
-                f_len = 1;
+                s += 1;
                 cmd->where_args.comp[comp_idx] = LE;
             } else {
                 goto error;
             }
 
-            if(s[f_len] == '\0') {
+            if(*s == '\0') {
                 arg_idx++;
                 if (arg_idx >= cmd->args_len) goto error;
                 s = cmd->args[arg_idx];
-            } else {
-                s += f_len;
             }
 
             if(*s == '\"') {
