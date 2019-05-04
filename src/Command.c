@@ -9,6 +9,7 @@ CMD_t cmd_list[] = {
     { ".help", 5, BUILT_IN_CMD },
     { "insert", 6, QUERY_CMD },
     { "select", 6, QUERY_CMD },
+    { "update", 6, QUERY_CMD },
     { "", 0, UNRECOG_CMD },
 };
 
@@ -109,6 +110,9 @@ void cleanup_Command(Command_t *cmd) {
         cmd->cmd_args.sel_args.fields = NULL;
         cmd->cmd_args.sel_args.aggrs = NULL;
         cmd->cmd_args.sel_args.fields_len = 0;
+    } else if (cmd->type == UPDATE_CMD) {
+        free(cmd->cmd_args.update_args.sval);
+        memset(&(cmd->cmd_args), 0, sizeof(CmdArg_t));
     }
     cmd->type = UNRECOG_CMD;
     cmd->args_len = 0;
