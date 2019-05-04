@@ -17,6 +17,7 @@ void handle_builtin_cmd(Table_t *table, Command_t *cmd, State_t *state);
 int handle_query_cmd(Table_t *table, Command_t *cmd);
 int handle_insert_cmd(Table_t *table, Command_t *cmd);
 int handle_select_cmd(Table_t *table, Command_t *cmd);
+void handle_delete_cmd(Table_t *table, Command_t *cmd);
 void handle_update_cmd(Table_t *table, Command_t *cmd);
 void update_users(Table_t* table, Command_t *cmd);
 int check_condition(User_t *user, WhereArgs_t* where_args);
