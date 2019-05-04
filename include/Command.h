@@ -1,5 +1,6 @@
 #ifndef COMMAND_H
 #define COMMAND_H
+#include <stddef.h>
 
 enum { 
     UNRECOG_CMD,
@@ -10,6 +11,7 @@ enum {
 enum {
     INSERT_CMD = 100,
     SELECT_CMD,
+    UPDATE_CMD,
 };
 
 typedef enum Comp { EQ, NEQ, GT, LE, GTQ, LEQ } Comp_t;
@@ -48,8 +50,15 @@ typedef struct WhereArgs {
     Logic_t logic;
 } WhereArgs_t;
 
+typedef struct UpdateArgs {
+    char field[16];
+    int ival;
+    char* sval;
+} UpdateArgs_t;
+
 typedef union {
     SelectArgs_t sel_args;
+    UpdateArgs_t update_args;
 } CmdArg_t;
 
 typedef struct Command {

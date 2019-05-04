@@ -9,6 +9,7 @@
 #include "Command.h"
 #include "Table.h"
 #include "SelectState.h"
+#include "UpdateState.h"
 
 ///
 /// Allocate State_t and initialize some attributes
@@ -230,7 +231,11 @@ int handle_query_cmd(Table_t *table, Command_t *cmd) {
     } else if (!strncmp(cmd->args[0], "select", 6)) {
         handle_select_cmd(table, cmd);
         return SELECT_CMD;
-    } else {
+    } else if (!strncmp(cmd->args[0], "update", 6)) {
+        handle_update_cmd(table, cmd);
+        return UPDATE_CMD;
+    }
+    else {
         return UNRECOG_CMD;
     }
 }
@@ -266,6 +271,37 @@ int handle_select_cmd(Table_t *table, Command_t *cmd) {
         print_aggr(table, cmd);
     }
     return table->len;
+}
+
+void handle_update_cmd(Table_t *table, Command_t *cmd) {
+    cmd->type = UPDATE_CMD;
+    update_state_handler(cmd, 1);
+    update_users(table, cmd);
+}
+
+void update_users(Table_t* table, Command_t *cmd) {
+    User_t** users = malloc(sizeof(User_t*) * table->len);
+    int udx = 0, id_exist = 0;
+    for (int i = 0; i < table->len; i++) {
+        User_t* usr_ptr = get_User(table, i);
+        if(usr_ptr->id == cmd->cmd_args.update_args.ival) id_exist = 1;
+        if(check_condition(usr_ptr, &(cmd->where_args)))
+            users[udx++] = usr_ptr;
+    }
+    char* field = cmd->cmd_args.update_args.field;
+    if (!strncmp(field, "id", 2) && udx == 1 && !id_exist) {
+        users[0]->id = cmd->cmd_args.update_args.ival;
+    } else if (!strncmp(field, "name", 4)) {
+        for (int i = 0; i < udx; i++)
+            strncpy(users[i]->name, cmd->cmd_args.update_args.sval, MAX_USER_NAME);
+    } else if (!strncmp(field, "email", 5)) {
+        for (int i = 0; i < udx; i++)
+            strncpy(users[i]->email, cmd->cmd_args.update_args.sval, MAX_USER_EMAIL);
+    } else if (!strncmp(field, "age", 3)) {
+        for (int i = 0; i < udx; i++)
+            users[i]->age = cmd->cmd_args.update_args.ival;
+    }
+    free(users);
 }
 
 void print_aggr(Table_t* table, Command_t *t) {
