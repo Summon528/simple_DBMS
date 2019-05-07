@@ -1,0 +1,13 @@
+insert 1 "user1" "user1@example.com" 10
+insert 2 "user2" "user2@example.com" 20
+insert 3 "user3" "user3@example.com" 30
+select avg(age) from table
+update table set age =100 where age >= 20
+select sum(age), sum(id) from table
+update table set id = 4 where age >= 30
+select sum(id) from table
+update table set id=4 where age = 10
+select sum(id) from table
+delete from table
+select count(*) from table
+.exit
