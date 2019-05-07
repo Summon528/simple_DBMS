@@ -1,0 +1,20 @@
+insert 1 "user1" "user1@example.com" 20
+insert 2 "user2" "user2@example.com" 23
+insert 3 "user3" "user3@example.com" 23
+insert 4 "user4" "user4@example.com" 25
+insert 5 "user5" "user5@example.com" 26
+insert 6 "user6" "user6@example.com" 22
+delete from table where age>23 or name="user2"
+select * from table
+delete from table
+delete from table
+delete from table
+select * from table
+insert 4 "user4" "user4@example.com" 25
+update table set id=8 where id= 4
+insert 6 "user6" "user6@example.com" 22
+update table set id=8 where age = 22
+select sum(id) from table
+update table set id=7 where age = 22
+select sum(id) from table where id != 87 and age > 0
+.exit

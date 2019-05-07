@@ -349,7 +349,11 @@ void print_aggr(Table_t* table, Command_t *t) {
         if (i != 0) printf(", ");
         switch (t->cmd_args.sel_args.aggrs[i]) {
             case AVG:
-                printf("%.3lf", (double)sun / cnt);
+                if (cnt != 0) {
+                    printf("%.3lf", (double)sun / cnt);
+                } else {
+                    printf("%.3lf", 0.0);
+                }
                 break;
             case COUNT:
                 printf("%d", cnt);
