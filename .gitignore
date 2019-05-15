@@ -12,3 +12,5 @@ test/system/output/*
 test/system/**/large/*
 
 .vscode/ipch/
+
+result.json
