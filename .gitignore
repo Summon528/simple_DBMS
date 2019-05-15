@@ -11,3 +11,5 @@ shell
 test/system/output/*
 
 .vscode/ipch/
+
+result.json
