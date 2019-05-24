@@ -1,4 +1,5 @@
 #include "WhereState.h"
+#include "SelectState.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -70,7 +71,15 @@ void where_state_handler(Command_t *cmd, size_t arg_idx) {
             arg_idx++;
             cmd->where_args.len++;
             
-            if(arg_idx == cmd->args_len) return;
+            if(arg_idx == cmd->args_len) {
+                return;
+            } else if (arg_idx < cmd->args_len && !strcmp(cmd->args[arg_idx], "offset")) {
+                offset_state_handler(cmd, arg_idx+1);
+                return;
+            } else if (arg_idx < cmd->args_len && !strcmp(cmd->args[arg_idx], "limit")) {
+                limit_state_handler(cmd, arg_idx+1);
+                return;
+            }
             if(comp_idx == 0) {
                 if(!strcmp(cmd->args[arg_idx], "and")) {
                     cmd->where_args.logic = AND;
