@@ -71,23 +71,31 @@ void print_users(Table_t *table, int *idxList, size_t idxListLen, Command_t *cmd
     }
 
     if (idxList) {
-        for (idx = offset; idx < idxListLen; idx++) {
-            if (limit != -1 && (idx - offset) >= limit) {
-                break;
-            }
+        int idx = 0, cnt = 0;
+        for (idx = 0; cnt < offset && idx < idxListLen; idx++) {
+            usr_ptr = get_User(table, idx);
+            if(check_condition(usr_ptr, &(cmd->where_args))) cnt++;
+        }
+        cnt = 0;
+        for (;(cnt < limit || limit == -1) && idx < idxListLen; idx++) {
             usr_ptr = get_User(table, idxList[idx]);
             if(check_condition(usr_ptr, &(cmd->where_args))) {
                 print_user(usr_ptr, &(cmd->cmd_args.sel_args));
+                cnt++;
             }
         }
     } else {
-        for (idx = offset; idx < table->len; idx++) {
-            if (limit != -1 && (idx - offset) >= limit) {
-                break;
-            }
+        int idx = 0, cnt = 0;
+        for (idx = 0; cnt < offset && idx < table->len; idx++) {
+            usr_ptr = get_User(table, idx);
+            if(check_condition(usr_ptr, &(cmd->where_args))) cnt++;
+        }
+        cnt = 0;
+        for (;(cnt < limit || limit == -1) && idx < table->len; idx++) {
             usr_ptr = get_User(table, idx);
             if(check_condition(usr_ptr, &(cmd->where_args))) {
                 print_user(usr_ptr, &(cmd->cmd_args.sel_args));
+                cnt++;
             }
         }
     }
