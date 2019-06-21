@@ -61,7 +61,6 @@ void print_user(User_t *user, SelectArgs_t *sel_args) {
 /// Print the users for given offset and limit restriction
 ///
 void print_users(Table_t *table, int *idxList, size_t idxListLen, Command_t *cmd) {
-    size_t idx;
     int limit = cmd->cmd_args.sel_args.limit;
     int offset = cmd->cmd_args.sel_args.offset;
     User_t *usr_ptr;

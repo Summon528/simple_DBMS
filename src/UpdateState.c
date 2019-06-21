@@ -6,7 +6,7 @@
 
 void update_state_handler(Command_t *cmd, size_t arg_idx) {
     if (arg_idx < cmd->args_len) {
-        if(strcmp(cmd->args[arg_idx], "table")) goto error;
+        if(strcmp(cmd->args[arg_idx], "user")) goto error;
         arg_idx++;
         if(strcmp(cmd->args[arg_idx], "set")) goto error;
         arg_idx++;

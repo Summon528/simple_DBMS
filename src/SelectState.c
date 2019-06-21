@@ -51,7 +51,7 @@ void field_state_handler(Command_t *cmd, size_t arg_idx) {
 
 void table_state_handler(Command_t *cmd, size_t arg_idx) {
     if (arg_idx < cmd->args_len
-            && !strncmp(cmd->args[arg_idx], "table", 5)) {
+            && !strncmp(cmd->args[arg_idx], "user", 5)) {
 
         arg_idx++;
         if (arg_idx == cmd->args_len) {
