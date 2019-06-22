@@ -100,6 +100,30 @@ void print_users(Table_t *table, int *idxList, size_t idxListLen, Command_t *cmd
     }
 }
 
+void print_likes(Table_t *table, Command_t *cmd) {
+    int idx = cmd->cmd_args.sel_args.offset;
+    int limit = cmd->cmd_args.sel_args.limit;
+    if (idx == -1) idx = 0;
+    for (int jdx = 0; idx < table->like_len && (jdx < limit || limit == -1); idx++, jdx++) {
+        int id1, id2;
+        get_Like(table, idx, &id1, &id2);
+        printf("(");
+        for (int kdx = 0; kdx < cmd->cmd_args.sel_args.fields_len; kdx++) {
+            if (!strncmp(cmd->cmd_args.sel_args.fields[kdx], "*", 1)) {
+                printf("%d, %d", id1, id2);
+            } else {
+                if (kdx > 0) printf(", ");
+                if (!strncmp(cmd->cmd_args.sel_args.fields[kdx], "id1", 3)) {
+                    printf("%d", id1);
+                } else if (!strncmp(cmd->cmd_args.sel_args.fields[kdx], "id2", 3)) {
+                    printf("%d", id2);
+                }
+            }
+        }
+        printf(")\n");
+    }
+}
+
 int check_condition(User_t* usr_ptr, WhereArgs_t* w) {
     if (w->len == 0) return 1;
     int result[2];
@@ -257,12 +281,20 @@ int handle_query_cmd(Table_t *table, Command_t *cmd) {
 ///
 int handle_insert_cmd(Table_t *table, Command_t *cmd) {
     int ret = 0;
-    User_t *user = command_to_User(cmd);
-    if (user) {
-        ret = add_User(table, user);
-        if (ret > 0) {
-            cmd->type = INSERT_CMD;
+    if (strcmp(cmd->args[2], "user") == 0) {
+        User_t *user = command_to_User(cmd);
+        if (user) {
+            ret = add_User(table, user);
+            if (ret > 0) {
+                cmd->type = INSERT_CMD;
+            }
         }
+    } else if (strcmp(cmd->args[2], "like") == 0) {
+        ret = 1;
+        cmd->type = INSERT_CMD;
+        int id1 = atoi(cmd->args[3]);
+        int id2 = atoi(cmd->args[4]);
+        add_Like(table, id1, id2);
     }
     return ret;
 }
@@ -276,7 +308,11 @@ int handle_select_cmd(Table_t *table, Command_t *cmd) {
     cmd->type = SELECT_CMD;
     field_state_handler(cmd, 1);
     if (cmd->cmd_args.sel_args.aggrs[0] == NO_AGGR) {
-        print_users(table, NULL, 0, cmd);
+        if(cmd->cmd_args.sel_args.tabl == USER) {
+            print_users(table, NULL, 0, cmd);
+        } else {
+            print_likes(table, cmd);
+        }
     } else {
         print_aggr(table, cmd);
     }
@@ -339,18 +375,32 @@ void handle_delete_cmd(Table_t *table, Command_t *cmd) {
 void print_aggr(Table_t* table, Command_t *t) {
     if (t->cmd_args.sel_args.offset > 0) return;
     if (t->cmd_args.sel_args.limit == 0) return;
+    Tabl_t tabl = t->cmd_args.sel_args.tabl;
     printf("(");
     for (int i = 0; i < t->cmd_args.sel_args.fields_len; i++) {
         if(t->cmd_args.sel_args.aggrs[i] == NO_AGGR) continue;
         int sun = 0, cnt = 0;
-        for (int j = 0; j < table->len; j++) {
-            User_t* usr_ptr = get_User(table, j);
-            if(!check_condition(usr_ptr, &(t->where_args))) continue;
-            cnt++;
-            if (!strncmp(t->cmd_args.sel_args.fields[i], "id", 2)) {
-                sun += usr_ptr->id;
-            } else if (!strncmp(t->cmd_args.sel_args.fields[i], "age", 3)) {
-                sun += usr_ptr->age;
+        if (tabl == USER) {
+            for (int j = 0; j < table->len; j++) {
+                User_t* usr_ptr = get_User(table, j);
+                if(!check_condition(usr_ptr, &(t->where_args))) continue;
+                cnt++;
+                if (!strncmp(t->cmd_args.sel_args.fields[i], "id", 2)) {
+                    sun += usr_ptr->id;
+                } else if (!strncmp(t->cmd_args.sel_args.fields[i], "age", 3)) {
+                    sun += usr_ptr->age;
+                }
+            }
+        } else {
+            for (int j = 0; j < table->like_len; j++) {
+                int id1, id2;
+                get_Like(table, j, &id1, &id2);
+                cnt++;
+                if (!strncmp(t->cmd_args.sel_args.fields[i], "id1", 3)) {
+                    sun += id1;
+                } else if (!strncmp(t->cmd_args.sel_args.fields[i], "id2", 3)) {
+                    sun += id2;
+                }
             }
         }
         if (i != 0) printf(", ");

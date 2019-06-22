@@ -24,5 +24,6 @@ int check_condition(User_t *user, WhereArgs_t* where_args);
 void print_help_msg();
 int _check_condition_str(char* val, WhereArgs_t* w, int idx);
 int _check_condition_num(int val, WhereArgs_t* w, int idx);
+void print_likes(Table_t *table, Command_t *cmd);
 
 #endif

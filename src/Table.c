@@ -14,6 +14,10 @@ Table_t *new_Table(char *file_name) {
     table->len = 0;
     table->users = (User_t*)malloc(
                             sizeof(User_t) * INIT_TABLE_SIZE);
+    table->like_capacity = INIT_TABLE_SIZE;
+    table->like_len = 0;
+    table->like_id1 = (int*)malloc(sizeof(int) * INIT_TABLE_SIZE);
+    table->like_id2 = (int*)malloc(sizeof(int) * INIT_TABLE_SIZE);
     table->cache_map = (unsigned char*)malloc(sizeof(char)*INIT_TABLE_SIZE);
     memset(table->cache_map, 0, sizeof(char)*INIT_TABLE_SIZE);
     table->fp = NULL;
@@ -62,6 +66,22 @@ int add_User(Table_t *table, User_t *user) {
     table->cache_map[idx] = 1;
     table->len++;
     return 1;
+}
+
+void add_Like(Table_t *table, int id1, int id2) {
+    if (table->like_len >= table->like_capacity) {
+        table->like_capacity += EXT_LEN;
+        table->like_id1 = (int *)realloc(table->like_id1, sizeof(int) * table->like_capacity);
+        table->like_id2 = (int *)realloc(table->like_id2, sizeof(int) * table->like_capacity);
+    }
+    table->like_id1[table->like_len] = id1;
+    table->like_id2[table->like_len] = id2;
+    table->like_len++;
+}
+
+void get_Like(Table_t *table, size_t idx, int *id1, int *id2) {
+    *id1 = table->like_id1[idx];
+    *id2 = table->like_id2[idx];
 }
 
 ///
@@ -160,4 +180,3 @@ User_t* get_User(Table_t *table, size_t idx) {
 error:
     return NULL;
 }
-

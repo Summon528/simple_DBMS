@@ -36,6 +36,10 @@ void field_state_handler(Command_t *cmd, size_t arg_idx) {
             add_select_field(cmd, s, aggr);
         } else if (!strncmp(s, "age", 3)) {
             add_select_field(cmd, s, aggr);
+        } else if (!strncmp(s, "id1", 3)) {
+            add_select_field(cmd, s, aggr);
+        } else if (!strncmp(s, "id2", 3)) {
+            add_select_field(cmd, s, aggr);
         } else if (!strncmp(s, "from", 4)) {
             table_state_handler(cmd, arg_idx+1);
             return;
@@ -50,8 +54,14 @@ void field_state_handler(Command_t *cmd, size_t arg_idx) {
 }
 
 void table_state_handler(Command_t *cmd, size_t arg_idx) {
-    if (arg_idx < cmd->args_len
-            && !strncmp(cmd->args[arg_idx], "user", 5)) {
+    if (arg_idx < cmd->args_len) {
+        if (!strncmp(cmd->args[arg_idx], "user", 4)) {
+            cmd->cmd_args.sel_args.tabl = USER;
+        } else if (!strncmp(cmd->args[arg_idx], "like", 4))  {
+            cmd->cmd_args.sel_args.tabl = LIKE;
+        } else {
+            return;
+        }
 
         arg_idx++;
         if (arg_idx == cmd->args_len) {
