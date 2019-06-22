@@ -384,11 +384,36 @@ void print_aggr(Table_t* table, Command_t *t) {
             for (int j = 0; j < table->len; j++) {
                 User_t* usr_ptr = get_User(table, j);
                 if(!check_condition(usr_ptr, &(t->where_args))) continue;
-                cnt++;
+                int local_cnt = 0;
+                if (t->join_args.used) {
+                    int lop, rop;
+                    if (!strncmp(t->join_args.l_operand, "id", 2)) {
+                        lop = usr_ptr->id;
+                    } else if (!strncmp(t->join_args.l_operand, "age", 3)) {
+                        lop = usr_ptr->age;
+                    } else {
+                        continue;
+                    }
+                    for (int k = 0; k < table->like_len; k++) {
+                        int id1, id2;
+                        get_Like(table, k, &id1, &id2);
+                        if (!strncmp(t->join_args.r_operand, "id1", 3)) {
+                            rop = id1;
+                        } else if (!strncmp(t->join_args.r_operand, "id2", 3)) {
+                            rop = id2;
+                        } else {
+                            continue;
+                        }
+                        if (lop == rop) local_cnt++;
+                    }
+                } else {
+                    local_cnt = 1;
+                }
+                cnt += local_cnt;
                 if (!strncmp(t->cmd_args.sel_args.fields[i], "id", 2)) {
-                    sun += usr_ptr->id;
+                    sun += usr_ptr->id * local_cnt;
                 } else if (!strncmp(t->cmd_args.sel_args.fields[i], "age", 3)) {
-                    sun += usr_ptr->age;
+                    sun += usr_ptr->age * local_cnt;
                 }
             }
         } else {

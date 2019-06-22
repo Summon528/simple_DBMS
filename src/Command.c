@@ -101,6 +101,7 @@ void cleanup_Command(Command_t *cmd) {
     if(cmd->where_args.type[0]==_string) free(cmd->where_args.r_operand[0].sval);
     if(cmd->where_args.type[1]==_string) free(cmd->where_args.r_operand[1].sval);
     memset(&(cmd->where_args), 0, sizeof(WhereArgs_t));
+    memset(&(cmd->join_args), 0, sizeof(JoinArgs_t));
     if (cmd->type == SELECT_CMD) {
         for (idx = 0; idx < cmd->cmd_args.sel_args.fields_len; idx++) {
             free(cmd->cmd_args.sel_args.fields[idx]);

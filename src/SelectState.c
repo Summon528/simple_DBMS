@@ -75,6 +75,34 @@ void table_state_handler(Command_t *cmd, size_t arg_idx) {
         } else if (!strncmp(cmd->args[arg_idx], "where", 5)) {
             where_state_handler(cmd, arg_idx+1);
             return;
+        } else if (!strncmp(cmd->args[arg_idx], "join", 4)) {
+            join_state_handler(cmd, arg_idx+1);
+            return;
+        }
+    }
+    cmd->type = UNRECOG_CMD;
+    return;
+}
+
+void join_state_handler(Command_t *cmd, size_t arg_idx) {
+    if (arg_idx < cmd->args_len && !strcmp(cmd->args[arg_idx], "like") && !strcmp(cmd->args[arg_idx + 1], "on")) {
+        arg_idx += 2;
+        strncpy(cmd->join_args.l_operand, cmd->args[arg_idx], sizeof(cmd->join_args.l_operand) - 1);
+        arg_idx += 2;
+        strncpy(cmd->join_args.r_operand, cmd->args[arg_idx], sizeof(cmd->join_args.r_operand) - 1);
+        arg_idx++;
+        cmd->join_args.used = 1;
+        if (arg_idx == cmd->args_len) {
+            return;
+        } else if (!strncmp(cmd->args[arg_idx], "offset", 6)) {
+            offset_state_handler(cmd, arg_idx+1);
+            return;
+        } else if (!strncmp(cmd->args[arg_idx], "limit", 5)) {
+            limit_state_handler(cmd, arg_idx+1);
+            return;
+        } else if (!strncmp(cmd->args[arg_idx], "where", 5)) {
+            where_state_handler(cmd, arg_idx+1);
+            return;
         }
     }
     cmd->type = UNRECOG_CMD;

@@ -53,6 +53,12 @@ typedef struct WhereArgs {
     Logic_t logic;
 } WhereArgs_t;
 
+typedef struct JoinArgs {
+    char l_operand[16];
+    char r_operand[16];
+    int used;
+} JoinArgs_t;
+
 typedef struct UpdateArgs {
     char field[16];
     int ival;
@@ -71,6 +77,7 @@ typedef struct Command {
     size_t args_cap;
     CmdArg_t cmd_args;
     WhereArgs_t where_args;
+    JoinArgs_t join_args;
 } Command_t;
 
 Command_t* new_Command();
