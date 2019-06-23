@@ -59,8 +59,13 @@ int optimized_read_run(char *s) {
     }
 
     spn--;
+    int field;
+    for (field = spn - 1; sp[field] != sel_pos - 1; field--)
+        ;
+    field = spn - field - 1;
+
     if (!strncmp("select id, name from user offset ", s + sel_pos, 33) &&
-        !strncmp(" limit ", s + sp[spn - 3], 6)) {
+        !strncmp(" limit", s + sp[spn - 3], 6) && field == 9) {
         int offset, limit;
         offset = to_int(s + sp[spn - 4] + 1, s + sp[spn - 3]);
         limit = to_int(s + sp[spn - 2] + 1, s + sp[spn - 1]);
@@ -83,7 +88,7 @@ int optimized_read_run(char *s) {
 
     else if (!strncmp("select name, age from user where age <= ", s + sel_pos,
                       40) &&
-             !strncmp(" and age >= ", s + sp[spn - 5], 12)) {
+             !strncmp(" and age >= ", s + sp[spn - 5], 12) && field == 13) {
         int hage, lage;
         hage = to_int(s + sp[spn - 6] + 1, s + sp[spn - 5]);
         lage = to_int(s + sp[spn - 2] + 1, s + sp[spn - 1]);
@@ -109,7 +114,7 @@ int optimized_read_run(char *s) {
 
     else if (!strncmp("select count(*) from user where age <= ", s + sel_pos,
                       39) &&
-             !strncmp(" and age >= ", s + sp[spn - 5], 12)) {
+             !strncmp(" and age >= ", s + sp[spn - 5], 12) && field == 12) {
         int hage, lage, ans = 0;
         hage = to_int(s + sp[spn - 6] + 1, s + sp[spn - 5]);
         lage = to_int(s + sp[spn - 2] + 1, s + sp[spn - 1]);
@@ -129,7 +134,8 @@ int optimized_read_run(char *s) {
 
     else if (!strncmp("select count(*) from user join like on id = "
                       "id1 where name = ",
-                      s + sel_pos, 61)) {
+                      s + sel_pos, 61) &&
+             field == 14) {
         uint8_t *users;
         users = malloc(sizeof(uint8_t) * 1000000);
         memset(users, 0, sizeof(uint8_t) * 1000000);
@@ -153,14 +159,15 @@ int optimized_read_run(char *s) {
         putc_unlocked('(', fp);
         write_int(ans, fp);
         putc_unlocked(')', fp);
-        putc_unlocked('\n', fp);        
+        putc_unlocked('\n', fp);
         fclose(fp);
         return 0;
     }
 
     else if (!strncmp("select count(*) from user join like on id = "
                       "id2 where age < ",
-                      s + sel_pos, 60)) {
+                      s + sel_pos, 60) &&
+             field == 14) {
         uint8_t *users;
         users = malloc(sizeof(uint8_t) * 1000000);
         memset(users, 0, sizeof(uint8_t) * 1000000);

@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-Iinclude -Wall -g
+CFLAGS=-Iinclude -Wall -Ofast
 TARGET=shell
 DEPS=$(wildcard *.h)
 
