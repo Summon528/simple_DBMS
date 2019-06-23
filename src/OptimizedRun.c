@@ -43,6 +43,7 @@ int optimized_read_run(char *s) {
         if (s[i] == 'd' && i != 0 && s[i - 1] == '\n') is_normal = 1;
         if (like == -1 && i >= 2 && s[i - 1] == ' ' && s[i] == 'l')
             like = lines;
+        if (s[i] == '\n' && i >= 4 && s[i - 1] == 't' && s[i - 2] == 'i' && s[i - 3] == 'x' && s[i - 4] == 'e') break;
     }
     if (select != 1 || sel_pos != last3 + 1 || is_normal) return 1;
 
