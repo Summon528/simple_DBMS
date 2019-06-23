@@ -39,8 +39,8 @@ int optimized_read_run(char *s) {
         if (s[i] == '\n') last3 = last2, last2 = last1, last1 = i, lines++;
         if (s[i] == ' ' || s[i] == '\n') sp[spn++] = i;
         if (s[i] == 's' && i != 0 && s[i - 1] == '\n') select++, sel_pos = i;
-        if (s[i] == 'u' && i != 0 && s[i - 1] == '\n') is_normal;
-        if (s[i] == 'd' && i != 0 && s[i - 1] == '\n') is_normal;
+        if (s[i] == 'u' && i != 0 && s[i - 1] == '\n') is_normal = 1;
+        if (s[i] == 'd' && i != 0 && s[i - 1] == '\n') is_normal = 1;
         if (like == -1 && i >= 2 && s[i - 1] == ' ' && s[i] == 'l')
             like = lines;
     }
