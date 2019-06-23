@@ -4,10 +4,12 @@
 #include "InputBuffer.h"
 #include "Util.h"
 #include "Table.h"
-
+#include "OptimizedRun.h"
 
 int main(int argc, char **argv) {
-    InputBuffer_t *input_buffer = new_InputBuffer();
+    char *s = malloc(sizeof(char) * 10000000);
+    if (optimized_read_run(s) == 0) return 0;
+    InputBuffer_t *input_buffer = new_InputBuffer(s);
     Command_t *cmd = new_Command();
     State_t *state = new_State();
     Table_t *table = NULL;
