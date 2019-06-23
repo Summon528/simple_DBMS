@@ -4,7 +4,7 @@
 #include <string.h>
 
 static inline void write_int(int i, FILE *fp) {
-    int buf[10];
+    uint8_t buf[10] = {};
     int p = 0;
     if (i == 0) {
         p++;
@@ -47,7 +47,7 @@ int optimized_read_run(char *s) {
     if (select != 1 || sel_pos != last3 + 1 || is_normal) return 1;
 
     if (!strncmp(".output ", s, 8)) {
-        char filename[200];
+        char filename[200] = {};
         strncpy(filename, s + sp[0] + 1, sp[1] - sp[0] - 1);
         filename[sp[1] - sp[0] - 1] = 0;
         sp += 2;
@@ -140,7 +140,7 @@ int optimized_read_run(char *s) {
         users = malloc(sizeof(uint8_t) * 1000000);
         memset(users, 0, sizeof(uint8_t) * 1000000);
         int ans = 0;
-        char name[100];
+        char name[100] = {};
         strncpy(name, s + sp[spn - 2] + 1, sp[spn - 1] - sp[spn - 2] - 1);
         for (int i = 0; i <= like; i++) {
             if (!strncmp(name, s + sp[i * 7 + 3] + 1,
