@@ -25,9 +25,11 @@ State_t* new_State() {
 ///
 /// Print shell prompt
 ///
-void print_prompt(State_t *state) {
-    return;
-}
+// void print_prompt(State_t *state, InputBuffer_t *t){
+//     if (state->saved_stdout == -1 && t->from_str == 0) {
+//         printf("db > ");
+//     }
+// }
 
 ///
 /// Print the user in the specific format

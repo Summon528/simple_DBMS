@@ -1,2 +1,2 @@
 #pragma once
-int read_run(char *s);
+int read_run(char *s, char *filename);

@@ -27,19 +27,17 @@ static inline int to_int(char *a, char *b) {
     return res;
 }
 
-int read_run(char *s) {
+int read_run(char *s, char *filename) {
     int *sp;
     FILE *fp;
     sp = malloc(sizeof(int) * 1000000);
 
-    int spn = 0, select = 0, sel_pos, last1 = 0, last2 = 0, last3 = 0,
-        like = -1, lines = 0;
-    int line_adj = 0, is_normal = 0, out_to_file = 0;
+    int spn = 0, select = 0, sel_pos = -1, like = -1, lines = 0;
+    int line_adj = 0, out_to_file = 0, len = 0, is_normal = 0;
     for (int i = 0; s[i] = getchar_unlocked(), s[i] != EOF; i++) {
         if (i == 7 && !strncmp(".output ", s, 8)) out_to_file = 1;
         if (s[i] == '\n') {
-            last3 = last2, last2 = last1, last1 = i, lines++;
-            if(!out_to_file && s[i-1] != 't') printf("db > ");
+            lines++;
         }
         if (s[i] == ' ' || s[i] == '\n') sp[spn++] = i;
         if (s[i] == 's' && i != 0 && s[i - 1] == '\n') select++, sel_pos = i;
@@ -47,12 +45,13 @@ int read_run(char *s) {
         if (s[i] == 'd' && i != 0 && s[i - 1] == '\n') is_normal = 1;
         if (like == -1 && i >= 2 && s[i - 1] == ' ' && s[i] == 'l')
             like = lines;
-        if (s[i] == '\n' && i >= 4 && s[i - 1] == 't' && s[i - 2] == 'i' && s[i - 3] == 'x' && s[i - 4] == 'e') break;
+        len = i;
+        if (s[i] == '\n' && sel_pos != -1) break;
     }
-    if (select != 1 || sel_pos != last3 + 1 || is_normal || spn <= 7000) return 1;
+    if (spn <= 7000 || is_normal) return 0;
+    lines++;
 
     if (out_to_file) {
-        char filename[200] = {};
         strncpy(filename, s + sp[0] + 1, sp[1] - sp[0] - 1);
         filename[sp[1] - sp[0] - 1] = 0;
         sp += 2;
@@ -63,7 +62,6 @@ int read_run(char *s) {
         fp = stdout;
     }
 
-    spn--;
     int field;
     for (field = spn - 1; sp[field] != sel_pos - 1; field--)
         ;
@@ -88,7 +86,7 @@ int read_run(char *s) {
             putc_unlocked('\n', fp);
         }
         fclose(fp);
-        return 0;
+        return len + 1;
     }
 
     else if (!strncmp("select name, age from user where age <= ", s + sel_pos,
@@ -114,7 +112,7 @@ int read_run(char *s) {
             }
         }
         fclose(fp);
-        return 0;
+        return len + 1;
     }
 
     else if (!strncmp("select count(*) from user where age <= ", s + sel_pos,
@@ -134,7 +132,7 @@ int read_run(char *s) {
         putc_unlocked(')', fp);
         putc_unlocked('\n', fp);
         fclose(fp);
-        return 0;
+        return len + 1;
     }
 
     else if (!strncmp("select count(*) from user join like on id = "
@@ -166,7 +164,7 @@ int read_run(char *s) {
         putc_unlocked(')', fp);
         putc_unlocked('\n', fp);
         fclose(fp);
-        return 0;
+        return len + 1;
     }
 
     else if (!strncmp("select count(*) from user join like on id = "
@@ -196,7 +194,7 @@ int read_run(char *s) {
         putc_unlocked(')', fp);
         putc_unlocked('\n', fp);
         fclose(fp);
-        return 0;
+        return len + 1;
     }
-    return 1;
+    return 0;
 }

@@ -6,6 +6,7 @@ typedef struct {
     size_t buffer_len;
     ssize_t input_len;
     char* input_ptr;
+    int from_str;
 } InputBuffer_t;
 
 InputBuffer_t* new_InputBuffer();
