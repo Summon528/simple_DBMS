@@ -26,9 +26,7 @@ State_t* new_State() {
 /// Print shell prompt
 ///
 void print_prompt(State_t *state) {
-    if (state->saved_stdout == -1) {
-        printf("db > ");
-    }
+    return;
 }
 
 ///

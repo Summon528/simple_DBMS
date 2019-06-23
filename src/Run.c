@@ -27,16 +27,20 @@ static inline int to_int(char *a, char *b) {
     return res;
 }
 
-int optimized_read_run(char *s) {
+int read_run(char *s) {
     int *sp;
     FILE *fp;
     sp = malloc(sizeof(int) * 1000000);
 
     int spn = 0, select = 0, sel_pos, last1 = 0, last2 = 0, last3 = 0,
         like = -1, lines = 0;
-    int line_adj = 0, is_normal = 0;
+    int line_adj = 0, is_normal = 0, out_to_file = 0;
     for (int i = 0; s[i] = getchar_unlocked(), s[i] != EOF; i++) {
-        if (s[i] == '\n') last3 = last2, last2 = last1, last1 = i, lines++;
+        if (i == 7 && !strncmp(".output ", s, 8)) out_to_file = 1;
+        if (s[i] == '\n') {
+            last3 = last2, last2 = last1, last1 = i, lines++;
+            if(!out_to_file && s[i-1] != 't') printf("db > ");
+        }
         if (s[i] == ' ' || s[i] == '\n') sp[spn++] = i;
         if (s[i] == 's' && i != 0 && s[i - 1] == '\n') select++, sel_pos = i;
         if (s[i] == 'u' && i != 0 && s[i - 1] == '\n') is_normal = 1;
@@ -45,9 +49,9 @@ int optimized_read_run(char *s) {
             like = lines;
         if (s[i] == '\n' && i >= 4 && s[i - 1] == 't' && s[i - 2] == 'i' && s[i - 3] == 'x' && s[i - 4] == 'e') break;
     }
-    if (select != 1 || sel_pos != last3 + 1 || is_normal) return 1;
+    if (select != 1 || sel_pos != last3 + 1 || is_normal || spn <= 7000) return 1;
 
-    if (!strncmp(".output ", s, 8)) {
+    if (out_to_file) {
         char filename[200] = {};
         strncpy(filename, s + sp[0] + 1, sp[1] - sp[0] - 1);
         filename[sp[1] - sp[0] - 1] = 0;

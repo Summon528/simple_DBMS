@@ -4,11 +4,12 @@
 #include "InputBuffer.h"
 #include "Util.h"
 #include "Table.h"
-#include "OptimizedRun.h"
+#include "Run.h"
 
 int main(int argc, char **argv) {
     char *s = malloc(sizeof(char) * 10000000);
-    if (optimized_read_run(s) == 0) return 0;
+    printf("db > ");
+    if (read_run(s) == 0) return 0;
     InputBuffer_t *input_buffer = new_InputBuffer(s);
     Command_t *cmd = new_Command();
     State_t *state = new_State();
