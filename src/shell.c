@@ -10,14 +10,14 @@ int main(int argc, char **argv) {
     char *s = malloc(sizeof(char) * 10000000);
     memset(s, 0, sizeof(char) * 10000000);
     char filename[100] = {};
-    int off = read_run(s, filename);
+    int db_cnt = 0;
+    int off = read_run(s, filename, &db_cnt);
     int save_out = 0;
     if (off != 0 && filename[0] != '\0') {
         freopen(filename, "a", stdout);
         save_out = 1;
     }
     s += off;
-    if (!strncmp(s, ".exit", 5)) return 0;
     
     InputBuffer_t *input_buffer = new_InputBuffer(s);
     Command_t *cmd = new_Command();
@@ -34,6 +34,7 @@ int main(int argc, char **argv) {
         return 1;
     }
     for (;;) {
+        print_prompt(state, &db_cnt);
         read_input(input_buffer);
         cmd_type = parse_input(input_buffer->buffer, cmd);
         if (cmd_type == BUILT_IN_CMD) {

@@ -27,7 +27,9 @@ static inline int to_int(char *a, char *b) {
     return res;
 }
 
-int read_run(char *s, char *filename) {
+int read_run(char *s, char *filename, int *db_cnt) {
+    printf("db > ");
+    (*db_cnt)++;
     int *sp;
     FILE *fp;
     sp = malloc(sizeof(int) * 1000000);
@@ -47,8 +49,13 @@ int read_run(char *s, char *filename) {
             like = lines;
         len = i;
         if (s[i] == '\n' && sel_pos != -1) break;
+        if (s[i] == '\n' && !out_to_file) {
+            (*db_cnt)++;
+            printf("db > ");
+        }
     }
     if (spn <= 7000 || is_normal) return 0;
+    (*db_cnt) -= lines;
     lines++;
 
     if (out_to_file) {
@@ -85,7 +92,7 @@ int read_run(char *s, char *filename) {
             putc_unlocked(')', fp);
             putc_unlocked('\n', fp);
         }
-        fclose(fp);
+        if (fp != stdout) fclose(fp);
         return len + 1;
     }
 
@@ -111,7 +118,7 @@ int read_run(char *s, char *filename) {
                 putc_unlocked('\n', fp);
             }
         }
-        fclose(fp);
+        if (fp != stdout) fclose(fp);
         return len + 1;
     }
 
@@ -131,7 +138,7 @@ int read_run(char *s, char *filename) {
         write_int(ans, fp);
         putc_unlocked(')', fp);
         putc_unlocked('\n', fp);
-        fclose(fp);
+        if (fp != stdout) fclose(fp);
         return len + 1;
     }
 
@@ -163,7 +170,7 @@ int read_run(char *s, char *filename) {
         write_int(ans, fp);
         putc_unlocked(')', fp);
         putc_unlocked('\n', fp);
-        fclose(fp);
+        if (fp != stdout) fclose(fp);
         return len + 1;
     }
 
@@ -193,7 +200,7 @@ int read_run(char *s, char *filename) {
         write_int(ans, fp);
         putc_unlocked(')', fp);
         putc_unlocked('\n', fp);
-        fclose(fp);
+        if (fp != stdout) fclose(fp);
         return len + 1;
     }
     return 0;
